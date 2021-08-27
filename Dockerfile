@@ -1,14 +1,14 @@
 ## NOTE: to retain configuration; mount a Docker volume, or use a bind-mount, on /var/lib/zerotier-one
 
-ARG ZT_VERSION=1.6.5
 FROM debian:buster-slim as builder
 
 ## Supports x86_64, x86, arm, and arm64
 
+ARG ZT_VERSION=1.6.5
 RUN apt-get update && apt-get install -y curl gnupg && \
-    apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 0x1657198823e52a61  && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1657198823E52A61 && \
     echo "deb http://download.zerotier.com/debian/buster buster main" > /etc/apt/sources.list.d/zerotier.list && \
-    apt-get update && apt-get install -y zerotier-one=$(ZT_VERSION)
+    apt-get update && apt-get install -y zerotier-one=${ZT_VERSION}
 COPY init.sh /var/lib/zerotier-one/init.sh
 
 FROM debian:buster-slim
