@@ -1,0 +1,26 @@
+name: Build and Push to PyPI, Conda and Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Docker build and push
+      env:
+        NAME: zerotier
+        PASSWORD: ${{ secrets.DOCKER_TOKEN }}
+      run : |
+        VERSION=$(grep "ARG ZT_VERSION=" Dockerfile | grep -o "[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9a-z]\+")
+        docker --version
+        docker build -f Dockerfile -t yangwu91/${NAME}:${VERSION} -t yangwu91/${NAME}:latest .
+        docker login --username yangwu91 --password $PASSWORD
+        docker push yangwu91/${NAME}:latest
+        docker push yangwu91/${NAME}:${VERSION}
+        docker logout
